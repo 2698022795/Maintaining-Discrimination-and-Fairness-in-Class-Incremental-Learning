@@ -1,3 +1,4 @@
+# encoding:utf-8
 import pickle
 import numpy as np
 import os
@@ -73,7 +74,7 @@ class Cifar100:
             if step >= 1:
                 old_classes = []
                 for i in range(step):
-                    old_classes.extend(test_groups[i])
+                    old_classes.extend(test_groups[i])  # ������step֮ǰ������������ӵ�old_classes��
                 assert(len(old_classes) == 2000 * step)
                 random.shuffle(old_classes)
                 val_groups[step].extend(old_classes[:num_of_old_classes])

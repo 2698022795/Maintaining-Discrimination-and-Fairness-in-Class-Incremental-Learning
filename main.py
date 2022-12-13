@@ -5,7 +5,7 @@ import sys
 import argparse
 
 parser = argparse.ArgumentParser(description='Incremental Learning BIC')
-parser.add_argument('--batch_size', default = 128, type = int)
+parser.add_argument('--batch_size', default = 32, type = int)
 parser.add_argument('--epoch', default = 10, type = int)
 parser.add_argument('--lr', default = 0.1, type = int)
 parser.add_argument('--max_size', default = 2000, type = int)

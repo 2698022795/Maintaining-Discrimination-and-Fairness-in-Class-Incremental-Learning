@@ -25,8 +25,8 @@ class Trainer:
     def __init__(self, total_cls):
         self.total_cls = total_cls
         self.seen_cls = 0
-        self.dataset = Cifar100()
-        self.model = Resnet(32,total_cls).cuda()
+        self.dataset = Cifar100()  # 创建数据集
+        self.model = Resnet(32,total_cls).cuda()  # 创建模型
         print(self.model)
         self.input_transform = Compose([
                                 transforms.RandomHorizontalFlip(),
@@ -82,7 +82,7 @@ class Trainer:
 
         for step_b in range(dataset.batch_num):
             print(f"Incremental step : {step_b + 1}")
-            
+
             # Get the train and val data for step b,
             # and split them into train_x, train_y, val_x, val_y
             train, val = dataset.getNextClasses(step_b)
@@ -99,11 +99,11 @@ class Trainer:
                         batch_size=batch_size, shuffle=True, drop_last=True)
             val_data = DataLoader(BatchData(val_xs, val_ys, self.input_transform_eval),
                         batch_size=batch_size, shuffle=False)
-            
+
             # Set optimizer and scheduler
             optimizer = optim.SGD(self.model.parameters(), lr=lr, momentum=0.9,  weight_decay=2e-4)
             scheduler = MultiStepLR(optimizer, [100, 150, 200], gamma=0.1)
-            
+
             # Print the number of classes have been trained
             self.seen_cls += total_cls//dataset.batch_num
             print("seen classes : ", self.seen_cls)
@@ -114,7 +114,7 @@ class Trainer:
                 print("Epoch", epoch)
 
                 # Print current learning rate
-                scheduler.step()
+
                 cur_lr = self.get_lr(optimizer)
                 print("Current Learning Rate : ", cur_lr)
 
@@ -124,9 +124,10 @@ class Trainer:
                     self.stage1_distill(train_data, criterion, optimizer)
                 else:
                     self.stage1(train_data, criterion, optimizer)
-                
+
                 # Evaluation
                 acc = self.eval(val_data)
+                scheduler.step()
 
             if is_WA:
                 # Maintaining Fairness
@@ -180,4 +181,4 @@ class Trainer:
             ce_losses.append(loss_crossEntropy.item())
         print("KD loss :", np.mean(distill_losses), "; CE loss :", np.mean(ce_losses))
 
-    
+
